@@ -6,6 +6,7 @@ export function initializeGame() {
   const ctx = canvas.getContext('2d')!;
   const speed = 150;
   const pixelSize = 20;
+  let keyPressed = false;
 
   // Initial game state
   const snakePositions = [
@@ -16,28 +17,34 @@ export function initializeGame() {
   let applePosition = { x: 100, y: 100 };
   let direction = 'up';
 
-  // Event listener for key presses
-  window.addEventListener('keydown', (event) => {
+  const eventListener = (event: KeyboardEvent) => {
+    if (keyPressed) return;
     switch (event.key) {
       case 'ArrowUp':
         if (direction === 'down') break;
         direction = 'up';
+        keyPressed = true;
         break;
       case 'ArrowDown':
         if (direction === 'up') break;
         direction = 'down';
+        keyPressed = true;
         break;
       case 'ArrowLeft':
         if (direction === 'right') break;
         direction = 'left';
+        keyPressed = true;
         break;
       case 'ArrowRight':
         if (direction === 'left') break;
         direction = 'right';
+        keyPressed = true;
         break;
     }
-  });
+  }
 
+  // Event listener for key presses
+  window.addEventListener('keydown', eventListener);
   // Game loop
   function gameLoop() {
 
@@ -72,6 +79,7 @@ export function initializeGame() {
         snakePositions.push({x: snakePositions[0].x + pixelSize, y: snakePositions[0].y});
       snakePositions[0].x += pixelSize;
     }
+    keyPressed = false;
       
     console.log(snakePositions);
     // Clear canvas
