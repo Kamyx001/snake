@@ -42,3 +42,19 @@ h1 {
   padding: 2rem;
   text-align: center;
 }
+
+canvas {
+  border: 2px solid #555;
+  background-color: white;
+}
+
+#scoreboard {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+#restart {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+}

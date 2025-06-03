@@ -4,11 +4,18 @@ import { drawApple, drawSnake } from './drawFunctions';
 export function initializeGame() {
   const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
   const ctx = canvas.getContext('2d')!;
+  const scoreboard = document.querySelector<HTMLDivElement>('#scoreboard')!;
+  const restartButton = document.querySelector<HTMLButtonElement>('#restart')!;
   const speed = 150;
   const pixelSize = 20;
   let keyPressed = false;
+  let highScore = parseInt(localStorage.getItem('highScore') ?? '0');
 
-  // Initial game state
+  restartButton.style.display = 'none';
+  restartButton.onclick = () => {
+    initializeGame();
+  };
+
   const snakePositions = [
     { x: 300, y: 300 },
     { x: 300 - pixelSize, y: 300 },
@@ -16,6 +23,17 @@ export function initializeGame() {
   ];
   let applePosition = { x: 100, y: 100 };
   let direction = 'up';
+
+  const updateScoreboard = () => {
+    const score = snakePositions.length - 3;
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem('highScore', highScore.toString());
+    }
+    scoreboard.textContent = `Score: ${score} | High Score: ${highScore}`;
+  };
+
+  updateScoreboard();
 
   const eventListener = (event: KeyboardEvent) => {
     if (keyPressed) return;
@@ -73,7 +91,10 @@ export function initializeGame() {
     );
 
     if (colidedWithSelf || colidedWithWall) {
-      gameOver(ctx, snakePositions.length);
+      updateScoreboard();
+      window.removeEventListener('keydown', eventListener);
+      restartButton.style.display = 'block';
+      gameOver(ctx, snakePositions.length - 3);
       return;
     }
 
@@ -84,6 +105,7 @@ export function initializeGame() {
         y: Math.floor(Math.random() * canvas.height / pixelSize) * pixelSize,
       };
       snakePositions.push(snakePositions[snakePositions.length - 1]);
+      updateScoreboard();
     }
 
     // Clear canvas and draw
@@ -99,10 +121,10 @@ export function initializeGame() {
   gameLoop();
 }
 
-function gameOver(ctx: CanvasRenderingContext2D, snakeLength: number) {
+function gameOver(ctx: CanvasRenderingContext2D, score: number) {
   ctx.font = '30px Arial';
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
   ctx.fillText('Game Over', ctx.canvas.width / 2, ctx.canvas.height / 2);
-  ctx.fillText(`Score: ${snakeLength}`, ctx.canvas.width / 2, ctx.canvas.height / 2 + 30);
+  ctx.fillText(`Score: ${score}`, ctx.canvas.width / 2, ctx.canvas.height / 2 + 30);
 }

@@ -2,9 +2,11 @@ import './style.css'
 import { initializeGame } from './gameLogic'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <canvas style="border: 1px solid black; background: white" height="1000" width="1000" id="canvas"></canvas>
-  </div>
+  <h1>Snake</h1>
+  <div id="scoreboard"></div>
+  <canvas height="600" width="600" id="canvas"></canvas>
+  <button id="restart">Restart</button>
 `
 
 initializeGame()
+
