@@ -9,10 +9,14 @@ export function didColideWithSelf(snakePositions: { x: number, y: number }[]): b
   return body.some(segment => segment.x === head.x && segment.y === head.y);
 }
 
-export function didGoIntoWall(snakePositions: { x: number, y: number }[], direction: string, canvasWidth: number, canvasHeight: number) {
-  if (direction === 'up' && snakePositions[0].y <= 0) return true
-  if (direction === 'down' && snakePositions[0].y >= canvasHeight) return true
-  if (direction === 'left' && snakePositions[0].x <= 0) return true
-  if (direction === 'right' && snakePositions[0].x >= canvasWidth) return true
+export function didGoIntoWall(
+  snakePositions: { x: number; y: number }[],
+  canvasWidth: number,
+  canvasHeight: number
+): boolean {
+  if (snakePositions[0].y < 0) return true
+  if (snakePositions[0].y >= canvasHeight) return true
+  if (snakePositions[0].x < 0) return true
+  if (snakePositions[0].x >= canvasWidth) return true
   return false
 }

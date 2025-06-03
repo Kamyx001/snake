@@ -48,48 +48,46 @@ export function initializeGame() {
   // Game loop
   function gameLoop() {
 
-    const ateApple: boolean = didColideWithApple(snakePositions, applePosition);
-    const colidedWithSelf: boolean = didColideWithSelf(snakePositions);
-    const colidedWithWall: boolean = didGoIntoWall(snakePositions, direction, canvas.width, canvas.height);
-    
-    if (colidedWithSelf||colidedWithWall) {
-      gameOver(ctx, snakePositions.length);
-      return;
-    }
-
     for (let i = snakePositions.length - 1; i > 0; i--) {
       snakePositions[i] = { ...snakePositions[i - 1] };
     }
 
-    // Update game state, move snake
+    // Update game state, move snake head
     if (direction === 'up') {
-      if (ateApple)
-        snakePositions.push({ x: snakePositions[0].x, y: snakePositions[0].y - pixelSize });
       snakePositions[0].y -= pixelSize;
-    } else if (direction === 'down') {   
-      if (ateApple)
-        snakePositions.push({x: snakePositions[0].x, y: snakePositions[0].y + pixelSize});
+    } else if (direction === 'down') {
       snakePositions[0].y += pixelSize;
     } else if (direction === 'left') {
-      if (ateApple)
-        snakePositions.push({x: snakePositions[0].x - pixelSize, y: snakePositions[0].y});
       snakePositions[0].x -= pixelSize;
     } else if (direction === 'right') {
-      if (ateApple)
-        snakePositions.push({x: snakePositions[0].x + pixelSize, y: snakePositions[0].y});
       snakePositions[0].x += pixelSize;
     }
     keyPressed = false;
-      
-    console.log(snakePositions);
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Check collisions
+    const colidedWithSelf: boolean = didColideWithSelf(snakePositions);
+    const colidedWithWall: boolean = didGoIntoWall(
+      snakePositions,
+      canvas.width,
+      canvas.height
+    );
 
-    // Draw apple and snake
+    if (colidedWithSelf || colidedWithWall) {
+      gameOver(ctx, snakePositions.length);
+      return;
+    }
+
+    // Check if apple was eaten
     if (didColideWithApple(snakePositions, applePosition)) {
-      applePosition = { x: Math.floor(Math.random() * canvas.width / pixelSize) * pixelSize, y: Math.floor(Math.random() * canvas.height / pixelSize) * pixelSize };
+      applePosition = {
+        x: Math.floor(Math.random() * canvas.width / pixelSize) * pixelSize,
+        y: Math.floor(Math.random() * canvas.height / pixelSize) * pixelSize,
+      };
       snakePositions.push(snakePositions[snakePositions.length - 1]);
     }
+
+    // Clear canvas and draw
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawApple(ctx, applePosition.x, applePosition.y, pixelSize);
     drawSnake(ctx, snakePositions, pixelSize);
 
